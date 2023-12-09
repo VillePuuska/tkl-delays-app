@@ -19,11 +19,14 @@ def get_and_save(**kwargs):
 
 def body_to_df(body: list, logging: int = 0) -> pd.DataFrame:
     """
-    Function that takes the body of the GET request to JourneysAPI Vehicle Activity endpoint and flattens it to a dataframe.
+    Function that takes the body of the GET request to JourneysAPI Vehicle Activity endpoint
+    and flattens it to a dataframe.
 
     params:
         - body: requests.get(URL).json()['body']
-        - logging: <= 0 - no logging/printing, >= 1 - print number of errors when flattening, >= 2 print every error message
+        - logging:  <= 0 - no logging/printing,
+                    >= 1 - print number of errors when flattening,
+                    >= 2 print every error message
     """
     def delay_sec(s: str) -> int:
         if s[0] == '-':
@@ -37,7 +40,8 @@ def body_to_df(body: list, logging: int = 0) -> pd.DataFrame:
     def stop_id(s: str) -> str:
         return s[-4:]
 
-    header = ['Recorded_At', 'Line', 'Direction', 'Date', 'Lon', 'Lat', 'Delay', 'Departure_Time', 'Stop', 'Stop_Order']
+    header = ['Recorded_At', 'Line', 'Direction', 'Date', 'Lon',
+              'Lat', 'Delay', 'Departure_Time', 'Stop', 'Stop_Order']
     
     lines = []
     broken_lines = 0
@@ -55,7 +59,8 @@ def body_to_df(body: list, logging: int = 0) -> pd.DataFrame:
             const_line = [rec_ts, line, direction, date, lon, lat, delay, dep_time]
 
             for onward_call in bus['monitoredVehicleJourney']['onwardCalls']:
-                lines.append(const_line + [stop_id(onward_call['stopPointRef']), int(onward_call['order'])])
+                lines.append(const_line +
+                             [stop_id(onward_call['stopPointRef']), int(onward_call['order'])])
         except Exception as e:
             if logging > 1:
                 print(e)
@@ -72,7 +77,25 @@ def flatten_and_upsert_function(**kwargs):
     body = contents['body']
     df = body_to_df(body, 2)
     hook = PostgresHook()
-    hook.insert_rows('records', list(df.itertuples(index=False)))
+    hook.insert_rows('records',
+                     list(df.itertuples(index=False)),
+                     ['Recorded_At',
+                      'Line',
+                      'Direction',
+                      'Date',
+                      'Lon',
+                      'Lat',
+                      'Delay',
+                      'Departure_Time',
+                      'Stop',
+                      'Stop_Order'],
+                      replace=True,
+                      replace_index=['Line',
+                                     'Direction',
+                                     'Date',
+                                     'Departure_Time',
+                                     'Stop'],
+                     )
     
 
 with DAG(

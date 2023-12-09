@@ -9,5 +9,6 @@ CREATE TABLE records (
     Delay int,
     Departure_Time varchar(4),
     Stop varchar(4),
-    Stop_Order int
+    Stop_Order int,
+    PRIMARY KEY(Line, Direction, Date, Departure_Time, Stop)
 );
