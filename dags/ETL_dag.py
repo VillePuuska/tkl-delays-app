@@ -10,6 +10,7 @@ from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.hooks.filesystem import FSHook
 from airflow.providers.http.hooks.http import HttpHook
 from airflow.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
 
 def get_and_save(**kwargs):
     response = HttpHook(method='GET').run()
@@ -116,4 +117,11 @@ with DAG(
         provide_context=True
     )
 
-    get_data_task >> flatten_and_upsert
+    archive_json = BashOperator(
+        task_id='archive_saved_json',
+        bash_command='mv $filepath/$filename $filepath/archive/$filename',
+        env={'filepath':FSHook().get_path(),
+             'filename':'{{ ts_nodash }}-api-call.txt'}
+    )
+
+    get_data_task >> flatten_and_upsert >> archive_json
