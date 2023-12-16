@@ -102,8 +102,9 @@ def flatten_and_upsert_function(**kwargs):
 with DAG(
     dag_id="etl",
     description="Entire ETL process",
-    start_date=datetime.datetime(2023, 12, 9),
-    schedule=None,
+    start_date=datetime.datetime(2023, 12, 16),
+    schedule='* * * * *',
+    catchup=False,
 ) as dag:
     get_data_task = PythonOperator(
         task_id='get_and_save_data_task',
