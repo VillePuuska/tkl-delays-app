@@ -5,7 +5,7 @@ from datetime import datetime
 import os
 
 def make_and_save_map(filename):
-    from folium import Map, Figure
+    from folium import Map, Figure, Circle
     TILES = "cartodbdark_matter"
     WIDTH = 750
     HEIGHT = 700
@@ -13,6 +13,10 @@ def make_and_save_map(filename):
     ZOOM = 12
     f = Figure(width=WIDTH, height=HEIGHT)
     m = Map(location=CENTER, tiles=TILES, zoom_start=ZOOM).add_to(f)
+    Circle(CENTER, color='blue', popup=f"Test marker\n{CENTER}",
+           fill=True, weight=0, fillOpacity=0.7, radius=100).add_to(m)
+    Circle([CENTER[0]+0.01, CENTER[1]+0.01], color='blue', popup=f"Test marker #2\n{[CENTER[0]+0.01, CENTER[1]+0.01]}",
+           fill=True, weight=0, fillOpacity=0.7, radius=100).add_to(m)
     m.save(filename)
 
 with DAG(
