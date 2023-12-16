@@ -184,3 +184,6 @@ go.work
 
 # Directories for all saved data
 data/
+
+# Created maps
+*.html
