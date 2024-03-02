@@ -11,7 +11,7 @@ def make_df(out_filename):
     df = pd.DataFrame({
         'Line':[1, 2, 3, 4],
         'Lon':[61.49398541579429, 61.49398541579429, 61.49398541579429, 61.49398541579429],
-        'Lat':[23.76282953958757, 23.76382953958757, 23.76482953958757, 23.76582953958757],
+        'Lat':[23.76282953958757, 23.77382953958757, 23.78482953958757, 23.79582953958757],
         'Delay':[0, 10, 20, 30],
         })
     df.to_csv(out_filename, index=False)
@@ -37,7 +37,8 @@ with DAG(
         from folium import Map, Figure, Circle
         import pandas as pd
 
-        print(pd.read_csv(in_filename))
+        df = pd.read_csv(in_filename)
+        print(df)
 
         TILES = "cartodbdark_matter"
         WIDTH = 750
@@ -46,11 +47,14 @@ with DAG(
         ZOOM = 12
         f = Figure(width=WIDTH, height=HEIGHT)
         m = Map(location=CENTER, tiles=TILES, zoom_start=ZOOM).add_to(f)
-        Circle(CENTER, color='blue', popup=f"Test marker\n{CENTER}",
-            fill=True, weight=0, fillOpacity=0.7, radius=100).add_to(m)
-        Circle([CENTER[0]+0.01, CENTER[1]+0.01], color='blue', popup=f"Test marker #2\n{[CENTER[0]+0.01, CENTER[1]+0.01]}",
-            fill=True, weight=0, fillOpacity=0.7, radius=100).add_to(m)
+
+        for _, row in df.iterrows():
+            coords = [float(row.Lon), float(row.Lat)]
+            Circle(coords, color='blue', popup=f"Line {row.Line}\nDelay {row.Delay}",
+                   fill=True, weight=0, fillOpacity=0.7, radius=100).add_to(m)
+
         m.save(out_filename)
+    
     folium_task = make_and_save_map(
         in_filename=os.path.join(FSHook().get_path(), '{{ ts_nodash }}-markers.csv'),
         out_filename=os.path.join(FSHook().get_path(), 'test_map.html')
