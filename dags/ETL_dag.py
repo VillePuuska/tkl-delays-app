@@ -180,13 +180,13 @@ with DAG(
         provide_context=True
     )
 
-    archive_json = BashOperator(
-        task_id='archive_saved_json',
-        bash_command='mv $filepath/$filename $filepath/archive/$filename',
-        env={'filepath':FSHook().get_path(),
-             'filename':'{{ ts_nodash }}-api-call.txt'}
-    )
+    # archive_json = BashOperator(
+    #     task_id='archive_saved_json',
+    #     bash_command='mv $filepath/$filename $filepath/archive/$filename',
+    #     env={'filepath':FSHook().get_path(),
+    #          'filename':'{{ ts_nodash }}-api-call.txt'}
+    # )
 
     get_data_task >> [flatten_and_upsert, delete_latest]
     delete_latest >> flatten_and_insert_latest
-    [flatten_and_upsert, flatten_and_insert_latest] >> archive_json
+    # [flatten_and_upsert, flatten_and_insert_latest] >> archive_json
