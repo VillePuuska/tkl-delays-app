@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS records;
-CREATE TABLE records (
+DROP TABLE IF EXISTS stops;
+CREATE TABLE stops (
     Recorded_At timestamp with time zone,
     Line varchar,
     Direction int,
@@ -13,8 +13,8 @@ CREATE TABLE records (
     PRIMARY KEY(Line, Direction, Date, Departure_Time, Stop)
 );
 
-DROP TABLE IF EXISTS latest;
-CREATE TABLE latest (
+DROP TABLE IF EXISTS buses;
+CREATE TABLE buses (
     Recorded_At timestamp with time zone,
     Line varchar,
     Direction int,
@@ -23,5 +23,5 @@ CREATE TABLE latest (
     Lat numeric,
     Delay int,
     Departure_Time varchar(4),
-    PRIMARY KEY(Line, Direction, Date, Departure_Time)
+    PRIMARY KEY(Recorded_At, Line, Direction, Date, Departure_Time)
 );

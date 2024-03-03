@@ -81,7 +81,7 @@ def flatten_and_upsert_function(**kwargs):
     body = contents['body']
     df = body_to_df(body, 2)
     hook = PostgresHook()
-    hook.insert_rows('records',
+    hook.insert_rows('stops',
                      list(df.itertuples(index=False)),
                      ['Recorded_At',
                       'Line',
@@ -101,7 +101,7 @@ def flatten_and_upsert_function(**kwargs):
                                      'Stop'],
                      )
 
-def body_to_df_latest(body: list, logging: int = 0) -> pd.DataFrame:
+def body_to_df_buses(body: list, logging: int = 0) -> pd.DataFrame:
     """
     Function that takes the body of the GET request to JourneysAPI Vehicle Activity endpoint
     and flattens it to a dataframe.
@@ -141,14 +141,15 @@ def body_to_df_latest(body: list, logging: int = 0) -> pd.DataFrame:
     
     return pd.DataFrame(lines, columns=header)
 
-def flatten_and_insert_latest_function(**kwargs):
+def flatten_insert_save_buses_function(**kwargs):
     filepath = FSHook().get_path()
     with open(os.path.join(filepath, f'{str(kwargs["ts_nodash"])}-api-call.txt'), 'r') as f:
         contents = json.loads(f.read())
     body = contents['body']
-    df = body_to_df_latest(body, 2)
+    df = body_to_df_buses(body, 2)
     hook = PostgresHook()
-    hook.insert_rows('latest', list(df.itertuples(index=False)))
+    hook.insert_rows('buses', list(df.itertuples(index=False)))
+    df.to_csv(os.path.join(filepath, 'latest_bus_data.csv'))
 
 with DAG(
     dag_id="etl",
@@ -164,19 +165,14 @@ with DAG(
     )
 
     flatten_and_upsert = PythonOperator(
-        task_id='flatten_and_upsert_data_task',
+        task_id='flatten_and_upsert_stop_data_task',
         python_callable=flatten_and_upsert_function,
         provide_context=True
     )
 
-    delete_latest = PostgresOperator(
-        task_id='delete_latest_task',
-        sql='DELETE FROM latest;'
-    )
-
     flatten_and_insert_latest = PythonOperator(
-        task_id='flatten_and_insert_latest_data_task',
-        python_callable=flatten_and_insert_latest_function,
+        task_id='flatten_insert_and_save_bus_data_task',
+        python_callable=flatten_insert_save_buses_function,
         provide_context=True
     )
 
@@ -187,6 +183,5 @@ with DAG(
     #          'filename':'{{ ts_nodash }}-api-call.txt'}
     # )
 
-    get_data_task >> [flatten_and_upsert, delete_latest]
-    delete_latest >> flatten_and_insert_latest
+    get_data_task >> [flatten_and_upsert, flatten_and_insert_latest]
     # [flatten_and_upsert, flatten_and_insert_latest] >> archive_json
