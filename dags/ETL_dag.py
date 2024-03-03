@@ -6,7 +6,6 @@ import json
 
 from airflow import DAG
 from airflow.decorators import task
-from airflow.providers.postgres.operators.postgres import PostgresOperator
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.hooks.filesystem import FSHook
 from airflow.providers.http.hooks.http import HttpHook
@@ -14,8 +13,8 @@ from airflow.operators.python import PythonOperator
 from airflow.operators.bash import BashOperator
 
 def get_and_save(**kwargs):
-    response = HttpHook(method='GET').run()
-    filepath = FSHook().get_path()
+    response = HttpHook(method='GET', http_conn_id='journeys_activity').run()
+    filepath = FSHook(fs_conn_id='fs_app').get_path()
     with open(os.path.join(filepath, f'{str(kwargs["ts_nodash"])}-api-call.txt'), 'w') as f:
         f.write(response.text)
 
@@ -76,12 +75,12 @@ def body_to_df(body: list, logging: int = 0) -> pd.DataFrame:
     return pd.DataFrame(lines, columns=header)
 
 def flatten_and_upsert_function(**kwargs):
-    filepath = FSHook().get_path()
+    filepath = FSHook(fs_conn_id='fs_app').get_path()
     with open(os.path.join(filepath, f'{str(kwargs["ts_nodash"])}-api-call.txt'), 'r') as f:
         contents = json.loads(f.read())
     body = contents['body']
     df = body_to_df(body, 2)
-    hook = PostgresHook()
+    hook = PostgresHook(postgres_conn_id='pg_app')
     hook.insert_rows('stops',
                      list(df.itertuples(index=False)),
                      ['Recorded_At',
@@ -143,13 +142,13 @@ def body_to_df_buses(body: list, logging: int = 0) -> pd.DataFrame:
     return pd.DataFrame(lines, columns=header)
 
 def flatten_insert_save_buses_function(**kwargs):
-    filepath = FSHook().get_path()
+    filepath = FSHook(fs_conn_id='fs_app').get_path()
     with open(os.path.join(filepath, f'{str(kwargs["ts_nodash"])}-api-call.txt'), 'r') as f:
         contents = json.loads(f.read())
     body = contents['body']
     df = body_to_df_buses(body, 2)
     df.to_csv(os.path.join(filepath, 'latest_bus_data.csv'))
-    hook = PostgresHook()
+    hook = PostgresHook(postgres_conn_id='pg_app')
     hook.insert_rows('buses',
                      list(df.itertuples(index=False)),
                      ['Recorded_At',
@@ -221,13 +220,13 @@ with DAG(
     # archive_json = BashOperator(
     #     task_id='archive_saved_json',
     #     bash_command='mv $filepath/$filename $filepath/archive/$filename',
-    #     env={'filepath':FSHook().get_path(),
+    #     env={'filepath':FSHook(fs_conn_id='fs_app').get_path(),
     #          'filename':'{{ ts_nodash }}-api-call.txt'}
     # )
     
     folium_task = make_and_save_map(
-        in_filename=os.path.join(FSHook().get_path(), 'latest_bus_data.csv'),
-        out_filename=os.path.join(FSHook().get_path(), 'map.html')
+        in_filename=os.path.join(FSHook(fs_conn_id='fs_app').get_path(), 'latest_bus_data.csv'),
+        out_filename=os.path.join(FSHook(fs_conn_id='fs_app').get_path(), 'map.html')
     )
 
     get_data_task >> [flatten_and_upsert, flatten_and_insert_latest]
