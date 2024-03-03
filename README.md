@@ -25,3 +25,4 @@ export AIRFLOW__CORE__DAGS_FOLDER=/workspaces/tkl-delays-app/dags
     - postgres_default
 - boot up postgres (docker compose up)
     - run create_tables.sql commands if running for the first time or want to reset data
+- you can test all the connections with the dags other than `etl`
