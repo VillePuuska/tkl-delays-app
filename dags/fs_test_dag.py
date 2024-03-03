@@ -6,7 +6,7 @@ from airflow.hooks.filesystem import FSHook
 from airflow.operators.python import PythonOperator
 
 def save_file(filename, contents):
-    path = FSHook().get_path()
+    path = FSHook(fs_conn_id='fs_app').get_path()
     with open(os.path.join(path, filename), 'w') as f:
         f.write(contents)
 

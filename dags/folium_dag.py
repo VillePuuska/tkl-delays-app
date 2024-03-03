@@ -26,7 +26,7 @@ with DAG(
     df_task = PythonOperator(
         task_id='make_df',
         python_callable=make_df,
-        op_kwargs={'out_filename':os.path.join(FSHook().get_path(), '{{ ts_nodash }}-markers.csv')}
+        op_kwargs={'out_filename':os.path.join(FSHook(fs_conn_id='fs_app').get_path(), '{{ ts_nodash }}-markers.csv')}
     )
 
     @task.virtualenv(
@@ -56,8 +56,8 @@ with DAG(
         m.save(out_filename)
     
     folium_task = make_and_save_map(
-        in_filename=os.path.join(FSHook().get_path(), '{{ ts_nodash }}-markers.csv'),
-        out_filename=os.path.join(FSHook().get_path(), 'test_map.html')
+        in_filename=os.path.join(FSHook(fs_conn_id='fs_app').get_path(), '{{ ts_nodash }}-markers.csv'),
+        out_filename=os.path.join(FSHook(fs_conn_id='fs_app').get_path(), 'test_map.html')
     )
 
     df_task >> folium_task
