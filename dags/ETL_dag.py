@@ -5,6 +5,7 @@ import os
 import json
 
 from airflow import DAG
+from airflow.decorators import task
 from airflow.providers.postgres.operators.postgres import PostgresOperator
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.hooks.filesystem import FSHook
@@ -147,9 +148,50 @@ def flatten_insert_save_buses_function(**kwargs):
         contents = json.loads(f.read())
     body = contents['body']
     df = body_to_df_buses(body, 2)
-    hook = PostgresHook()
-    hook.insert_rows('buses', list(df.itertuples(index=False)))
     df.to_csv(os.path.join(filepath, 'latest_bus_data.csv'))
+    hook = PostgresHook()
+    hook.insert_rows('buses',
+                     list(df.itertuples(index=False)),
+                     ['Recorded_At',
+                      'Line',
+                      'Direction',
+                      'Date',
+                      'Lon',
+                      'Lat',
+                      'Delay',
+                      'Departure_Time'],
+                      replace=True,
+                      replace_index=['Recorded_At',
+                                     'Line',
+                                     'Direction',
+                                     'Date',
+                                     'Departure_Time'],
+                     )
+
+@task.virtualenv(
+    task_id="make_folium_map",
+    requirements=["folium==0.15.0", "pandas==2.1.2"],
+)
+def make_and_save_map(in_filename, out_filename):
+    from folium import Map, Figure, Circle
+    import pandas as pd
+
+    df = pd.read_csv(in_filename)
+
+    TILES = "cartodbdark_matter"
+    WIDTH = 750
+    HEIGHT = 700
+    CENTER = [61.49398541579429, 23.76282953958757]
+    ZOOM = 12
+    f = Figure(width=WIDTH, height=HEIGHT)
+    m = Map(location=CENTER, tiles=TILES, zoom_start=ZOOM).add_to(f)
+
+    for _, row in df.iterrows():
+        coords = [float(row.Lon), float(row.Lat)]
+        Circle(coords, color='blue', popup=f"Line {row.Line}\nDelay {row.Delay}",
+                fill=True, weight=0, fillOpacity=0.7, radius=100).add_to(m)
+
+    m.save(out_filename)
 
 with DAG(
     dag_id="etl",
@@ -182,6 +224,11 @@ with DAG(
     #     env={'filepath':FSHook().get_path(),
     #          'filename':'{{ ts_nodash }}-api-call.txt'}
     # )
+    
+    folium_task = make_and_save_map(
+        in_filename=os.path.join(FSHook().get_path(), 'latest_bus_data.csv'),
+        out_filename=os.path.join(FSHook().get_path(), 'map.html')
+    )
 
     get_data_task >> [flatten_and_upsert, flatten_and_insert_latest]
-    # [flatten_and_upsert, flatten_and_insert_latest] >> archive_json
+    flatten_and_insert_latest >> folium_task
