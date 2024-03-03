@@ -187,7 +187,7 @@ def make_and_save_map(in_filename, out_filename):
     m = Map(location=CENTER, tiles=TILES, zoom_start=ZOOM).add_to(f)
 
     for _, row in df.iterrows():
-        coords = [float(row.Lon), float(row.Lat)]
+        coords = [float(row.Lat), float(row.Lon)]
         Circle(coords, color='blue', popup=f"Line {row.Line}\nDelay {row.Delay}",
                 fill=True, weight=0, fillOpacity=0.7, radius=100).add_to(m)
 
