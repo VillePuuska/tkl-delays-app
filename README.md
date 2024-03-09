@@ -47,7 +47,7 @@ export AIRFLOW_CONN_JOURNEYS_ACTIVITY='{
     "host": "http://data.itsfactory.fi/journeys/api/1/vehicle-activity",
     "port": null,
     "schema": "",
-    "extra": "{\"User-Agent\": \"github.com/VillePuuska/tkl-delays-app\"}"
+    "extra": "{\"User-Agent\": \"Airflow\"}"
 }'
 export AIRFLOW_CONN_PG_APP='{
     "conn_type": "postgres",
