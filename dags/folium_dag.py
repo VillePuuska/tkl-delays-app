@@ -6,6 +6,7 @@ from datetime import datetime
 import pandas as pd
 import numpy as np
 import os
+from folium import Map, Figure, Circle
 
 def make_df(out_filename):
     df = pd.DataFrame({
@@ -29,14 +30,10 @@ with DAG(
         op_kwargs={'out_filename':os.path.join(FSHook(fs_conn_id='fs_app').get_path(), '{{ ts_nodash }}-markers.csv')}
     )
 
-    @task.virtualenv(
+    @task(
         task_id="make_map",
-        requirements=["folium==0.15.0", "pandas==2.1.2"],
     )
     def make_and_save_map(in_filename, out_filename):
-        from folium import Map, Figure, Circle
-        import pandas as pd
-
         df = pd.read_csv(in_filename)
         print(df)
 
