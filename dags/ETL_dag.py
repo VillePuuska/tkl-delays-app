@@ -5,6 +5,7 @@ import os
 import json
 
 from utils.flatten import body_to_df, body_to_df_buses
+from utils.map import make_and_save_map
 
 from airflow import DAG
 from airflow.decorators import task
@@ -73,31 +74,6 @@ def flatten_insert_save_buses_function(**kwargs):
                                      'Departure_Time'],
                      )
 
-@task.virtualenv(
-    task_id="make_folium_map",
-    requirements=["folium==0.15.0", "pandas==2.1.2"],
-)
-def make_and_save_map(in_filename, out_filename):
-    from folium import Map, Figure, Circle
-    import pandas as pd
-
-    df = pd.read_csv(in_filename)
-
-    TILES = "cartodbdark_matter"
-    WIDTH = 750
-    HEIGHT = 700
-    CENTER = [61.49398541579429, 23.76282953958757]
-    ZOOM = 12
-    f = Figure(width=WIDTH, height=HEIGHT)
-    m = Map(location=CENTER, tiles=TILES, zoom_start=ZOOM).add_to(f)
-
-    for _, row in df.iterrows():
-        coords = [float(row.Lat), float(row.Lon)]
-        Circle(coords, color='blue', popup=f"Line {row.Line}\nDelay {row.Delay}",
-                fill=True, weight=0, fillOpacity=0.7, radius=100).add_to(m)
-
-    m.save(out_filename)
-
 with DAG(
     dag_id="etl",
     description="Entire ETL process",
@@ -114,13 +90,13 @@ with DAG(
     flatten_and_upsert = PythonOperator(
         task_id='flatten_and_upsert_stop_data_task',
         python_callable=flatten_and_upsert_function,
-        provide_context=True
+        provide_context=True,
     )
 
     flatten_and_insert_latest = PythonOperator(
         task_id='flatten_insert_and_save_bus_data_task',
         python_callable=flatten_insert_save_buses_function,
-        provide_context=True
+        provide_context=True,
     )
 
     # archive_json = BashOperator(
@@ -130,9 +106,13 @@ with DAG(
     #          'filename':'{{ ts_nodash }}-api-call.txt'}
     # )
     
-    folium_task = make_and_save_map(
-        in_filename=os.path.join(FSHook(fs_conn_id='fs_app').get_path(), 'latest_bus_data.csv'),
-        out_filename=os.path.join(FSHook(fs_conn_id='fs_app').get_path(), 'map.html')
+    folium_task = PythonOperator(
+        task_id='make_folium_map_task',
+        python_callable=make_and_save_map,
+        op_kwargs={
+            'in_filename': os.path.join(FSHook(fs_conn_id='fs_app').get_path(), 'latest_bus_data.csv'),
+            'out_filename': os.path.join(FSHook(fs_conn_id='fs_app').get_path(), 'map.html'),
+        },
     )
 
     get_data_task >> [flatten_and_upsert, flatten_and_insert_latest]
