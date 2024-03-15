@@ -9,11 +9,8 @@ Planned outline:
 - Folium to plot latest data on a map,
 - possibly Golang+HTMX for a minimal web app.
 
-Running in codespaces notes:
-- webserver_config.py : set WTF_CSRF_ENABLED = False, otherwise logging to airflow web ui will fail with "The referrer does not match the host."
-
 General notes to get running:
-- airflow environment needs pandas, duckdb, and virtualenv installed
+- airflow environment needs pandas, duckdb, and folium installed
 - env vars:
 ```
 export AIRFLOW__CORE__LOAD_EXAMPLES=False
@@ -61,3 +58,6 @@ export AIRFLOW_CONN_PG_APP='{
 }'
 ```
 **Note:** If you define connections with env variables, they will not show up in the Airflow UI.
+
+Running in codespaces notes:
+- webserver_config.py : set WTF_CSRF_ENABLED = False, otherwise logging to airflow web ui will fail with "The referrer does not match the host."
