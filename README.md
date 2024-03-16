@@ -10,6 +10,7 @@ Planned outline:
 - possibly Golang+HTMX for a minimal web app.
 
 General notes to get running:
+- create the directory `data`
 - airflow environment needs pandas, duckdb, and folium installed
 - env vars:
 ```

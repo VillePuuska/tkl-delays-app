@@ -25,3 +25,8 @@ CREATE TABLE buses (
     Departure_Time varchar(4),
     PRIMARY KEY(Recorded_At, Line, Direction, Date, Departure_Time)
 );
+
+DROP TABLE IF EXISTS testing_table;
+CREATE TABLE testing_table (
+    col1 varchar
+);
