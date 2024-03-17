@@ -54,5 +54,5 @@ export AIRFLOW_CONN_PG_APP='{
 # Create tables. Separated here so we do not need to wait for the container to spin up before running this command.
 cat ./create_tables.sql | docker exec -i tkl-delays-app-postgres-1 psql -U airflow -d airflow
 
-echo "\n\n\n\nTo complete setup, run airflow standalone once, then edit ~/airflow/webserver_config.py: set WTF_CSRF_ENABLED = False"
+echo -e "\n\n\n\nTo complete setup, run airflow standalone once, then edit ~/airflow/webserver_config.py: set WTF_CSRF_ENABLED = False"
 echo "Also, note that the Postgres container is already running."
