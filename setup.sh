@@ -2,9 +2,8 @@
 
 mkdir -p data
 
-# Pull and spin up database. Create tables.
+# Pull and spin up database.
 docker compose up -d
-cat ./create_tables.sql | docker exec -i tkl-delays-app-postgres-1 psql -U airflow -d airflow
 
 # Create python venv for airflow installation. Install dependencies and then airflow.
 python3 -m venv venv
@@ -51,6 +50,9 @@ export AIRFLOW_CONN_PG_APP='{
     "schema": "airflow",
     "extra": "{}"
 }'
+
+# Create tables. Separated here so we do not need to wait for the container to spin up before running this command.
+cat ./create_tables.sql | docker exec -i tkl-delays-app-postgres-1 psql -U airflow -d airflow
 
 echo "\n\n\n\nTo complete setup, run airflow standalone once, then edit ~/airflow/webserver_config.py: set WTF_CSRF_ENABLED = False"
 echo "Also, note that the Postgres container is already running."
