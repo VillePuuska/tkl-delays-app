@@ -9,6 +9,12 @@ Planned outline:
 - Folium to plot latest data on a map,
 - possibly Golang+HTMX for a minimal web app.
 
+Quick setup in codespaces:
+- `chmod +x setup.sh`
+- `. ./setup.sh`
+- `airflow standalone` -> `Ctrl-C` after it's up
+- edit `~/airflow/webserver_config.py: set WTF_CSRF_ENABLED = False`
+
 General notes to get running:
 - create the directory `data`
 - airflow environment needs pandas, duckdb, and folium installed
