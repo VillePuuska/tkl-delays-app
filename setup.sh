@@ -8,7 +8,7 @@ docker compose up -d
 # Create python venv for airflow installation. Install dependencies and then airflow.
 python3 -m venv venv
 source venv/bin/activate
-pip install pandas duckdb folium
+pip install pandas duckdb folium pytest
 
 AIRFLOW_VERSION=2.8.3
 PYTHON_VERSION="$(python --version | cut -d " " -f 2 | cut -d "." -f 1-2)"

@@ -13,7 +13,7 @@ def get_and_save(**kwargs):
         f.write(response.text)
 
 with DAG(
-    dag_id="get_and_save_test",
+    dag_id="test_get_and_save",
     description="Testing HTTP GET from JourneysAPI",
     start_date=datetime.datetime(2023, 12, 2),
     schedule=None,

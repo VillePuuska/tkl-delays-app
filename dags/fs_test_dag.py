@@ -11,7 +11,7 @@ def save_file(filename, contents):
         f.write(contents)
 
 with DAG(
-    dag_id="fs_test",
+    dag_id="test_fs",
     description="Testing connection to local filesystem",
     start_date=datetime.datetime(2023, 12, 2),
     schedule=None,

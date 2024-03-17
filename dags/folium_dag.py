@@ -18,7 +18,7 @@ def make_df(out_filename):
     df.to_csv(out_filename, index=False)
 
 with DAG(
-    "folium",
+    "test_folium",
     default_args={},
     description="Make and save a map of Tre",
     start_date=datetime(2023, 12, 16),

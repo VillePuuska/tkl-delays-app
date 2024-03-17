@@ -12,7 +12,7 @@ def select_to_df():
     return df.to_string()
 
 with DAG(
-    dag_id="postgres_test",
+    dag_id="test_postgres",
     description="Testing connection to local postgres",
     start_date=datetime.datetime(2023, 11, 28),
     schedule=None,

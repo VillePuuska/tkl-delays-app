@@ -9,11 +9,24 @@ Planned outline:
 - Folium to plot latest data on a map,
 - possibly Golang+HTMX for a minimal web app.
 
-Quick setup in codespaces:
+---
+
+First time setup in codespaces or a dev container:
 - `chmod +x setup.sh`
 - `. ./setup.sh`
 - `airflow standalone` -> `Ctrl-C` after it's up
 - edit `~/airflow/webserver_config.py: set WTF_CSRF_ENABLED = False`
+- `airflow standalone` again and your dev setup is running
+
+When booting up Airflow in the future, you need to set the env variables again every time before running `airflow standalone`.
+
+---
+
+Tests and running them:
+- `python -m pytest` from the directory `tkl-delays-app` to run pytests
+- run DAGs starting with `test_` in Airflow to test the envorinment
+
+---
 
 General notes to get running:
 - create the directory `data`
