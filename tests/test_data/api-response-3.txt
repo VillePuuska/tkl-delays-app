@@ -1,0 +1,78 @@
+{
+  "status" : "success",
+  "data" : {
+    "headers" : {
+      "paging" : {
+        "startIndex" : 0,
+        "pageSize" : 153,
+        "moreData" : false
+      }
+    }
+  },
+  "body" : [ {
+    "recordedAtTime" : "A",
+    "validUntilTime" : "B",
+    "monitoredVehicleJourney" : {
+      "lineRef" : "C",
+      "directionRef" : "D",
+      "framedVehicleJourneyRef" : {
+        "dateFrameRef" : "E",
+        "datedVehicleJourneyRef" : "F"
+      },
+      "vehicleLocation" : {
+        "longitude" : "G",
+        "latitude" : "H"
+      },
+      "operatorRef" : "I",
+      "bearing" : "J",
+      "delay" : "P0Y0M0DT0H11M11.111S",
+      "vehicleRef" : "K",
+      "journeyPatternRef" : "L",
+      "originShortName" : "M",
+      "destinationShortName" : "N",
+      "speed" : "O",
+      "originAimedDepartureTime" : "P",
+      "onwardCalls" : [ {
+        "expectedArrivalTime" : "Q",
+        "expectedDepartureTime" : "R",
+        "stopPointRef" : "https://data.itsfactory.fi/journeys/api/1/stop-points/SSSS",
+        "order" : "1"
+      }, {
+        "expectedArrivalTime" : "U",
+        "expectedDepartureTime" : "V",
+        "stopPointRef" : "https://data.itsfactory.fi/journeys/api/1/stop-points/WWWW",
+        "order" : "1"
+      } ]
+    }
+  }, {
+    "recordedAtTime" : "A2",
+    "validUntilTime" : "B2",
+    "monitoredVehicleJourney" : {
+      "lineRef" : "C2",
+      "directionRef" : "D2",
+      "framedVehicleJourneyRef" : {
+        "dateFrameRef" : "E2",
+        "datedVehicleJourneyRef" : "F2"
+      },
+      "vehicleLocation" : {
+        "longitude" : "G2",
+        "latitude" : "H2"
+      },
+      "operatorRef" : "I2",
+      "bearing" : "J2",
+      "delay" : "-P0Y0M0DT0HXM1.111S",
+      "vehicleRef" : "K2",
+      "journeyPatternRef" : "L2",
+      "originShortName" : "M2",
+      "destinationShortName" : "N2",
+      "speed" : "O2",
+      "originAimedDepartureTime" : "P2",
+      "onwardCalls" : [ {
+        "expectedArrivalTime" : "Q2",
+        "expectedDepartureTime" : "R2",
+        "stopPointRef" : "https://data.itsfactory.fi/journeys/api/1/stop-points/S2S2",
+        "order" : "2"
+      } ]
+    }
+  } ]
+}
