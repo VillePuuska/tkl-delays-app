@@ -11,20 +11,22 @@ Planned outline:
 
 ---
 
-First time setup in codespaces or a dev container:
+First time setup to get everything running:
 - `chmod +x setup.sh`
-- `. ./setup.sh`
-- `airflow standalone` -> `Ctrl-C` after it's up
-- edit `~/airflow/webserver_config.py: set WTF_CSRF_ENABLED = False`
-- `airflow standalone` again and your dev setup is running
+- `. ./setup.sh` Note the first dot as the script needs to be run in the _current_ shell as it sets environment variables for Airflow. Alternatively you can run `source ./setup.sh`
+- If NOT using codespaces, run `airflow standalone` and you're good to go.
+- If using codespaces:
+    - Run `airflow standalone` -> wait until Airflow is ready -> shut it down with `Ctrl-C`
+    - Edit `~/airflow/webserver_config.py`: set `WTF_CSRF_ENABLED = False` Without this edit logging in to airflow web ui will fail with "The referrer does not match the host."
+    - Run `airflow standalone` again and now your dev setup is running.
 
-When booting up Airflow in the future, you need to set the env variables again every time before running `airflow standalone`.
+**NOTE**: When booting up Airflow in the future, you need to set the env variables again every time before running `airflow standalone`
 
 ---
 
 Tests and running them:
-- `python -m pytest` from the directory `tkl-delays-app` to run pytests
-- run DAGs starting with `test_` in Airflow to test the envorinment
+- `python -m pytest` from the directory `tkl-delays-app` to run pytests.
+- Run DAGs starting with `test_` in Airflow to test the needed connections.
 
 ---
 
@@ -78,6 +80,3 @@ export AIRFLOW_CONN_PG_APP='{
 }'
 ```
 **Note:** If you define connections with env variables, they will not show up in the Airflow UI.
-
-Running in codespaces notes:
-- webserver_config.py : set WTF_CSRF_ENABLED = False, otherwise logging to airflow web ui will fail with "The referrer does not match the host."
