@@ -45,12 +45,20 @@ def get_buses_and_stops(
     return (df_buses, df_stops)
 
 
-def get_buses_and_stops_aggregated():
+def get_buses_and_stops_aggregated(
+    min_recorded_time: str = None, max_recorded_time: str = None
+):
     """
     Aggregates the bus and stop data.
     Returns the results as a tuple of two dataframes: (df_bus_agg, df_stop_agg)
+
+    If min_recorded_time and/or max_recorded_time are set, then rows are filtered
+    based on the column `recorded_at` before aggregation.
+    Left inclusive, right exclusive.
     """
-    df_buses, df_stops = get_buses_and_stops()
+    df_buses, df_stops = get_buses_and_stops(
+        min_recorded_time=min_recorded_time, max_recorded_time=max_recorded_time
+    )
 
     df_bus_agg = duckdb.sql(
         f"""
