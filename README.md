@@ -7,11 +7,11 @@ Planned outline:
 - data stored in a (local) Postgres db,
 - ETL orchestrated with Airflow,
 - Folium to plot latest data on a map,
-- possibly Golang+HTMX for a minimal web app.
+- Streamlit for a webapp.
 
 ---
 
-First time setup to get everything running:
+First time setup to get Airflow dev setup running:
 - `chmod +x setup.sh`
 - `. ./setup.sh` Note the first dot as the script needs to be run in the _current_ shell as it sets environment variables for Airflow. Alternatively you can run `source ./setup.sh`
 - If NOT using codespaces, run `airflow standalone` and you're good to go.
@@ -21,6 +21,14 @@ First time setup to get everything running:
     - Run `airflow standalone` again and now your dev setup is running.
 
 **NOTE**: When booting up Airflow in the future, you need to set the env variables again every time before running `airflow standalone`
+
+---
+
+Running the Streamlit app:
+- You need a Python environment with `streamlit`, `duckdb`, and `pandas`
+- Run `python -m streamlit run app/main.py` from the root of this repo, i.e. the directory `tkl-delays-app`.
+
+**NOTE**: If you are _not_ running in Codespaces, check the path to the file `data/map.html`. is the file `app/main.py` It will likely not be the hardcoded path `/workspaces/tkl-delays-app/data/map.html`.
 
 ---
 
