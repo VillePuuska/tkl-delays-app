@@ -15,5 +15,5 @@ except FileNotFoundError:
         "Could not find map.html. Make sure the filepath in `app/main.py` is correct."
     )
 
-st.write(df_bus_agg)
-st.write(df_stop_agg)
+st.dataframe(data=df_bus_agg, hide_index=True)
+st.dataframe(data=df_stop_agg, hide_index=True)
