@@ -1,13 +1,14 @@
 import streamlit as st
 import streamlit.components.v1 as components
 from utils.db_operations import get_buses_and_stops_aggregated
+import os
 
 df_bus_agg, df_stop_agg = get_buses_and_stops_aggregated()
 
 st.header("Latest bus locations.")
 
 try:
-    with open("/workspaces/tkl-delays-app/data/map.html") as f:
+    with open("data/map.html") as f:
         map_html = f.read()
     components.html(html=map_html, height=750, width=1000)
 except FileNotFoundError:

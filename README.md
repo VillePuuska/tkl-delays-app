@@ -28,7 +28,7 @@ Running the Streamlit app:
 - You need a Python environment with `streamlit`, `duckdb`, and `pandas`
 - Run `python -m streamlit run app/main.py` from the root of this repo, i.e. the directory `tkl-delays-app`.
 
-**NOTE**: If you are _not_ running in Codespaces, check the path to the file `data/map.html`. is the file `app/main.py` It will likely not be the hardcoded path `/workspaces/tkl-delays-app/data/map.html`.
+**NOTE**: If you don't run from the root directory of this repo, the relative path to the file `data/map.html` will be wrong.
 
 ---
 
