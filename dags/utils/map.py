@@ -1,5 +1,6 @@
-from folium import Map, Figure, Circle
+from folium import Map, Figure, Circle  # type: ignore
 import pandas as pd
+
 
 def make_and_save_map(in_filename: str, out_filename: str):
     df = pd.read_csv(in_filename)
@@ -14,7 +15,14 @@ def make_and_save_map(in_filename: str, out_filename: str):
 
     for _, row in df.iterrows():
         coords = [float(row.Lat), float(row.Lon)]
-        Circle(coords, color='blue', popup=f"Line {row.Line}\nDelay {row.Delay}",
-                fill=True, weight=0, fillOpacity=0.7, radius=100).add_to(m)
+        Circle(
+            coords,
+            color="blue",
+            popup=f"Line {row.Line}\nDelay {row.Delay}",
+            fill=True,
+            weight=0,
+            fillOpacity=0.7,
+            radius=100,
+        ).add_to(m)
 
     m.save(out_filename)
