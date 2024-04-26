@@ -3,17 +3,23 @@ import duckdb
 
 
 def delay_sec(s: str) -> int:
-    if s[0] == "-":
-        neg = -1
-        s = s[11 : len(s) - 5].split("M")
-    else:
-        neg = 1
-        s = s[10 : len(s) - 5].split("M")
-    return neg * (60 * int(s[0]) + int(s[1]))
+    try:
+        if s[0] == "-":
+            neg = -1
+            s = s[11 : len(s) - 5].split("M")
+        else:
+            neg = 1
+            s = s[10 : len(s) - 5].split("M")
+        return neg * (60 * int(s[0]) + int(s[1]))
+    except:
+        return None
 
 
 def stop_id(s: str) -> str:
-    return s[-4:]
+    try:
+        return s[-4:]
+    except:
+        return None
 
 
 def body_to_df(filepath: str, logging: int = 0) -> pd.DataFrame:
@@ -26,7 +32,8 @@ def body_to_df(filepath: str, logging: int = 0) -> pd.DataFrame:
     params:
         - filepath: str, path to the JSON-file,
         - logging:  <= 0 - no logging/printing,
-                    >= 1 - print number of dropped rows with missing values.
+                    >= 1 - print number of dropped rows with missing values,
+                    >= 2 - print the number of errors when converting delays and stop ids.
     """
 
     query = f"""
@@ -52,13 +59,23 @@ def body_to_df(filepath: str, logging: int = 0) -> pd.DataFrame:
     """
     df = duckdb.sql(query).df()
 
-    df["Delay"] = df["Delay"].map(delay_sec)
-    df["Stop"] = df["Stop"].map(stop_id)
-
     init_len = len(df)
     df = df.dropna()
     if logging >= 1:
         print(f"{init_len-len(df)} row(s) with NULLs dropped.")
+
+    df["Delay"] = df["Delay"].map(delay_sec)
+    init_len = len(df)
+    df = df.dropna()
+    if logging >= 2:
+        print(f"{init_len-len(df)} row(s) with malformatted delays dropped.")
+    df["Delay"] = df["Delay"].astype(int)
+
+    df["Stop"] = df["Stop"].map(stop_id)
+    init_len = len(df)
+    df = df.dropna()
+    if logging >= 2:
+        print(f"{init_len-len(df)} row(s) with malformatted stop ids dropped.")
 
     return df
 
@@ -73,7 +90,8 @@ def body_to_df_buses(filepath: str, logging: int = 0) -> pd.DataFrame:
     params:
         - filepath: str, path to the JSON-file,
         - logging:  <= 0 - no logging/printing,
-                    >= 1 - print number of dropped rows with missing values.
+                    >= 1 - print number of dropped rows with missing values,
+                    >= 2 - print the number of errors when converting delays.
     """
 
     query = f"""
@@ -94,11 +112,16 @@ def body_to_df_buses(filepath: str, logging: int = 0) -> pd.DataFrame:
     """
     df = duckdb.sql(query).df()
 
-    df["Delay"] = df["Delay"].map(delay_sec)
-
     init_len = len(df)
     df = df.dropna()
     if logging >= 1:
         print(f"{init_len-len(df)} row(s) with NULLs dropped.")
+
+    df["Delay"] = df["Delay"].map(delay_sec)
+    init_len = len(df)
+    df = df.dropna()
+    if logging >= 2:
+        print(f"{init_len-len(df)} row(s) with malformatted delays dropped.")
+    df["Delay"] = df["Delay"].astype(int)
 
     return df
