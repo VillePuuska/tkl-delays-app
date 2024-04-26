@@ -1,11 +1,12 @@
 import duckdb
 import pandas as pd
+from typing import Optional
 
 POSTGRES_CONN = "postgresql://airflow:airflow@localhost:5432/airflow"
 
 
 def get_buses_and_stops(
-    min_recorded_time: str = None, max_recorded_time: str = None
+    min_recorded_time: Optional[str] = None, max_recorded_time: Optional[str] = None
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     Fetches stored bus and stop data from Postgres.
@@ -46,7 +47,7 @@ def get_buses_and_stops(
 
 
 def get_buses_and_stops_aggregated(
-    min_recorded_time: str = None, max_recorded_time: str = None
+    min_recorded_time: Optional[str] = None, max_recorded_time: Optional[str] = None
 ):
     """
     Aggregates the bus and stop data.

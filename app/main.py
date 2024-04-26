@@ -1,7 +1,6 @@
 import streamlit as st
 import streamlit.components.v1 as components
 from utils.db_operations import get_buses_and_stops_aggregated
-import os
 
 df_bus_agg, df_stop_agg = get_buses_and_stops_aggregated()
 

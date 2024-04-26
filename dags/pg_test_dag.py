@@ -5,11 +5,13 @@ from airflow.providers.postgres.operators.postgres import PostgresOperator
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.operators.python import PythonOperator
 
-def select_to_df():
-    hook = PostgresHook(postgres_conn_id='pg_app')    
+
+def select_to_df() -> str:
+    hook = PostgresHook(postgres_conn_id="pg_app")
     df = hook.get_pandas_df(sql="SELECT * FROM testing_table;")
     print(df)
     return df.to_string()
+
 
 with DAG(
     dag_id="test_postgres",
@@ -18,13 +20,13 @@ with DAG(
     schedule=None,
 ) as dag:
     insert_task = PostgresOperator(
-        postgres_conn_id='pg_app',
+        postgres_conn_id="pg_app",
         task_id="insert_task",
         sql="INSERT INTO testing_table (col1) VALUES ('{{ ts }}');",
     )
 
     select_df_task = PythonOperator(
-        task_id='select_star_to_df',
+        task_id="select_star_to_df",
         python_callable=select_to_df,
     )
 

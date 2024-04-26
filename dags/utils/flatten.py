@@ -1,21 +1,22 @@
 import pandas as pd
 import duckdb
+from typing import Optional
 
 
-def delay_sec(s: str) -> int:
+def delay_sec(s: str) -> Optional[int]:
     try:
         if s[0] == "-":
             neg = -1
-            s = s[11 : len(s) - 5].split("M")
+            s_split = s[11 : len(s) - 5].split("M")
         else:
             neg = 1
-            s = s[10 : len(s) - 5].split("M")
-        return neg * (60 * int(s[0]) + int(s[1]))
+            s_split = s[10 : len(s) - 5].split("M")
+        return neg * (60 * int(s_split[0]) + int(s_split[1]))
     except:
         return None
 
 
-def stop_id(s: str) -> str:
+def stop_id(s: str) -> Optional[str]:
     try:
         return s[-4:]
     except:
