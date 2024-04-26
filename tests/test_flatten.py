@@ -1,5 +1,4 @@
 from dags.utils.flatten import delay_sec, stop_id, body_to_df, body_to_df_buses
-import json
 import pandas as pd
 
 
@@ -103,7 +102,8 @@ def test_body_to_df_buses():
     )
 
     pd.testing.assert_frame_equal(
-        df, body_to_df_buses("tests/test_data/api-response-1.txt").reset_index(drop=True)
+        df,
+        body_to_df_buses("tests/test_data/api-response-1.txt").reset_index(drop=True),
     )
 
     # Test with a missing field for one item:
@@ -122,7 +122,8 @@ def test_body_to_df_buses():
     )
 
     pd.testing.assert_frame_equal(
-        df, body_to_df_buses("tests/test_data/api-response-2.txt").reset_index(drop=True)
+        df,
+        body_to_df_buses("tests/test_data/api-response-2.txt").reset_index(drop=True),
     )
 
     # Test with a field with invalid format:
@@ -141,5 +142,6 @@ def test_body_to_df_buses():
     )
 
     pd.testing.assert_frame_equal(
-        df, body_to_df_buses("tests/test_data/api-response-3.txt").reset_index(drop=True)
+        df,
+        body_to_df_buses("tests/test_data/api-response-3.txt").reset_index(drop=True),
     )
