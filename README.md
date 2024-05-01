@@ -9,6 +9,8 @@ Planned outline:
 - Folium to plot latest data on a map,
 - Streamlit for a webapp.
 
+![Project diagram](./diagram.png)
+
 ---
 
 First time setup to get Airflow dev setup running:
